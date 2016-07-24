@@ -8,7 +8,7 @@
 //================================
 // No surprises here -- gulp + gulp-sass
 // be sure to npm i --save-dev gulp  (unless this is for a heroku deploy, then just include it in regular
-// dependencies, same for gulp-sass
+// dependencies, same for gulp-sass)
 //================================
 var gulp = require('gulp');
 var sass = require('gulp-sass');
