@@ -3,7 +3,8 @@
 // using the link above as a starting point -- will include comment files linking to other resources
 // like these:
 //  https://www.sitepoint.com/using-source-maps-debug-sass-chrome/
-//
+//  https://github.com/jakubpawlowicz/clean-css  <--- might be a nice alternative to Sass for processing CSS for
+// 'prod' task
 //================================
 // No surprises here -- gulp + gulp-sass
 // be sure to npm i --save-dev gulp  (unless this is for a heroku deploy, then just include it in regular
@@ -11,6 +12,7 @@
 //================================
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var chalk =  require('chalk'); //i just like chalk output -- it''s pretty
 //==================================
 // source-map stuff
 var sourcemaps = require('gulp-sourcemaps');
@@ -51,3 +53,45 @@ gulp.task('sass', function () {
         .pipe(gulp.dest(output));
 });
 
+//====================================================
+// WATCH stuff
+//====================================================
+gulp.task('watch', function() {
+    return gulp
+    // Watch the input folder for change,
+    // and run `sass` task when something happens
+        .watch(input, ['sass'])
+        // When there is a change,
+        // log a message in the console
+        .on('change', function(event) {
+            console.log(chalk.bold.blue('File ' + event.path + ' was ' + event.type + ', running tasks...'));
+        });
+});
+
+
+//====================================================
+// Maybe some error notifications?
+//====================================================
+
+var notify = require("gulp-notify");
+
+.pipe(sass(sassOptions)).on('error', notify.onError(function (error) {
+    return "Problem file : " + error.message;
+}))
+
+//====================================================
+// Default gulp actions
+//====================================================
+
+gulp.task('default', ['sass', 'watch']);
+
+//====================================================
+// production tasks
+//====================================================
+gulp.task('prod', ['sassdoc'], function () {
+    return gulp
+        .src(input)
+        .pipe(sass({ outputStyle: 'compressed' }))
+        .pipe(autoprefixer(autoprefixerOptions))
+        .pipe(gulp.dest(output));
+});
